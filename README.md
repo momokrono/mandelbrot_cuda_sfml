@@ -11,3 +11,6 @@ s key to save current render to png file
 
 ### compile
 be sure to have sfml installed, then just `make`, the output will be called `mandelbrot`
+
+### colors
+by default the color palette used is an approximation of the one used in Ultra Fractal, if you want to change the palette just modify the vector containing the colors and re-compile with `make`

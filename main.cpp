@@ -17,19 +17,10 @@ int main()
     sf::Sprite sprite;
     sf::RenderWindow window(sf::VideoMode(window_size, window_size), "mandelbrot");
     sf::Font font; font.loadFromFile("arial.ttf");
-	sf::Text text;
-	text.setFont(font);
-	text.setCharacterSize(20);
-	text.setFillColor(sf::Color::White);
-
-    // std::vector<sf::Color> colors{
-    //     {0,0,0},
-    //     {213,67,31},
-    //     {251,255,121},
-    //     {62,223,89},
-    //     {43,30,218},
-    //     {0,255,247}
-    // };
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(20);
+    text.setFillColor(sf::Color::White);
 
     std::vector<sf::Color> colors{
             {0,7,100},
@@ -87,7 +78,7 @@ int main()
                 auto u = colors[i_mu + 1];
                 double a = mu - i_mu;
                 auto h = 1 - a;
-	            auto c = sf::Color(h*v.r+a*u.r, h*v.g+a*u.g, h*v.b+a*u.b);
+                auto c = sf::Color(h*v.r+a*u.r, h*v.g+a*u.g, h*v.b+a*u.b);
                 fractal.setPixel(x, y, c);
             }
         }
