@@ -6,10 +6,10 @@
 
 #include <SFML/Graphics.hpp>
 
-__global__ void mandelize(double min_re, double max_re,
-                         double min_im, double max_im,
-                         int size, int max_iter, int max_color,
-                         double *sizes)
+__global__ void mandelize(double const min_re, double const max_re,
+                         double const min_im, double const max_im,
+                         int const size, int const max_iter, int const max_color,
+                         double *mus)
 {
     int idx = blockIdx.x*gridDim.x + threadIdx.x;
     int x = threadIdx.x;
@@ -31,8 +31,8 @@ __global__ void mandelize(double min_re, double max_re,
     if (iter == max_iter)
         iter = 0;
     double c_size = std::sqrt(r*r+i*i);
-    double mu = (iter+1-log(log(c_size))/log(2)/log(2))/max_iter;
-    sizes[idx] = mu;
+    double mu = (iter+1-log(log(c_size))/log(2)/log(2))/max_iter*max_color;
+    mus[idx] = mu;
 };
 
 int main()
@@ -60,8 +60,6 @@ int main()
 
     auto max_color = colors.size() - 1;
 
-    auto cores = std::thread::hardware_concurrency();
-
     double min_re = -2.0;
     double max_re = 1.0;
     double min_im = -1.5;
@@ -70,12 +68,12 @@ int main()
     int max_iter = 256;
     double zoom = 1.;
 
-    double *sizes;
-    cudaMallocManaged(&sizes, sizeof(double)*size*size);
+    double *mus;
+    cudaMallocManaged(&mus, sizeof(double)*size*size);
 
     auto compute = [&]()
     {
-        mandelize<<<size,size>>>(min_re, max_re, min_im, max_im, size, max_iter, max_color, sizes);
+        mandelize<<<size,size>>>(min_re, max_re, min_im, max_im, size, max_iter, max_color, mus);
         cudaDeviceSynchronize();
 
         for (int idx{0}; idx < size*size; ++idx)
@@ -83,8 +81,7 @@ int main()
             auto x = idx % size;
             auto y = idx / size;
 
-            auto mu = sizes[idx];
-            mu *= max_color;
+            auto mu = mus[idx];
             auto i_mu = static_cast<size_t>(mu);
             auto v = colors[i_mu];
             auto u = colors[i_mu + 1];
@@ -188,4 +185,5 @@ int main()
         window.display();
     }
 
+    cudaFree(mus);
 }
