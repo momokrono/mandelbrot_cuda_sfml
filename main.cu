@@ -6,17 +6,17 @@
 
 #include <SFML/Graphics.hpp>
 
-__global__ void mandelize(double const min_re, double const max_re,
-                         double const min_im, double const max_im,
-                         int const size, int const max_iter, int const max_color,
+__global__ void mandelize(double const x_offset, double const y_offset,
+                         double const x_scale, double const y_scale,
+                         int const max_iter, int const max_color,
                          double *mus)
 {
     int idx = blockIdx.x*gridDim.x + threadIdx.x;
     int x = threadIdx.x;
     int y = blockIdx.x;
     double r, i, r_0, i_0;
-    r_0 = min_re + (max_re - min_re)*x / size;
-    i_0 = min_im + (max_im - min_im)*y / size;
+    r_0 = x_offset + x_scale * x;
+    i_0 = y_offset + y_scale * y;
     r = i = 0;
     int iter = 0;
     while (iter < max_iter)
@@ -73,7 +73,9 @@ int main()
 
     auto compute = [&]()
     {
-        mandelize<<<size,size>>>(min_re, max_re, min_im, max_im, size, max_iter, max_color, mus);
+        auto x_scale = (max_re - min_re) / size;
+        auto y_scale = (max_im - min_im) / size;
+        mandelize<<<size,size>>>(min_re, min_im, x_scale, y_scale, max_iter, max_color, mus);
         cudaDeviceSynchronize();
 
         for (int idx{0}; idx < size*size; ++idx)
