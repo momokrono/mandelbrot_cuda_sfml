@@ -15,3 +15,8 @@ Basic c++ mandelbrot plotter using sfml and cuda
 
 ### colors
 by default the color palette used is an approximation of the one used in Ultra Fractal, if you want to change the palette just modify the vector containing the colors and re-compile with `make` or `make cuda`
+
+### render examples
+![1](https://github.com/momokrono/mandelbrot_cuda_sfml/blob/master/pictures/mandel-8192x.png)
+![2](https://github.com/momokrono/mandelbrot_cuda_sfml/blob/master/pictures/mandel-524288x.png)
+![3](https://github.com/momokrono/mandelbrot_cuda_sfml/blob/master/pictures/mandel-64x.png)
